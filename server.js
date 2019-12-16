@@ -52,6 +52,14 @@ app.get("/articles", function(req, res) {
   });
 });
 
+app.put("/saving", function(req, res) {
+  db.Articles.update({ _id: Articles._id }, { $set: { isSaved: true } }).then(
+    function() {
+      res.send("article saved");
+    }
+  );
+});
+
 app.get("/saved", function(req, res) {
   db.Articles.find({ isSaved: true })
     .populate("note")
