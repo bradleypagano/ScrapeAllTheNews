@@ -5,6 +5,7 @@ const cheerio = require("cheerio");
 const db = require("./models");
 const PORT = process.env.PORT || 3000;
 const app = express();
+const path = require("path");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -22,14 +23,16 @@ app.get("/scrape", function(req, res) {
     $(".full-item-content").each(function(i, element) {
       const result = {};
       result.title = $(this)
-        .childred("a")
+        .children("a")
         .text();
       result.body = $(this)
-        .children("p")
+        .find("p")
         .text();
       result.link = $(this)
         .children("a")
         .attr("href");
+
+      console.log(result);
 
       db.Articles.create(result)
         .then(function(dbArticles) {
@@ -50,15 +53,36 @@ app.get("/articles", function(req, res) {
 });
 
 app.get("/saved", function(req, res) {
-  db.Saved.find({})
+  db.Articles.find({ isSaved: true })
     .populate("note")
-    .then(function(dbSaved) {
-      res.json(dbSaved);
+    .then(function(dbArticles) {
+      res.json(dbArticles);
     });
 });
 
+app.post("/notes", function(req, res) {
+  db.Notes.create(req.body)
+    .then(function(dbNotes) {
+      return db.Articles.findById(
+        {},
+        { $push: { note: dbNotes._id } },
+        { new: true }
+      );
+    })
+    .then(function(dbArticles) {
+      res.json(dbArticles);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+app.get("/saves", function(req, res) {
+  res.sendFile(path.join(__dirname, "./public/saved.html"));
+});
+
 app.get("/home", function(req, res) {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
 app.listen(PORT, function() {

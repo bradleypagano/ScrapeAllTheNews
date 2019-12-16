@@ -17,6 +17,12 @@ const ArticlesSchema = new Schema({
     required: true
   },
 
+  isSaved: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+
   note: {
     type: Schema.Types.ObjectId,
     ref: "Notes"
