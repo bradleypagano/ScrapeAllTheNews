@@ -1,4 +1,4 @@
-const Axios = require("axios");
+const axios = require("axios");
 
 $.getJSON("/articles", function(data) {
   for (var i = 0; i < data.length; i++) {
@@ -48,10 +48,12 @@ $("#noteButton").on("click", function() {
   }).then(function(data) {
     console.log(data);
     if (data.note) {
-      $("#notesView").append(
-        `<h2>${data.note.title}</h2>
-         <p>${data.note.body}</p>`
-      );
+      for (let i = 0; i < data.length; i++) {
+        $("#notesView").append(
+          `<h2>${data[i].note.title}</h2>
+         <p>${data[i].note.body}</p>`
+        );
+      }
     }
   });
 });
@@ -59,20 +61,22 @@ $("#noteButton").on("click", function() {
 $("#savenote").on("click", function() {
   const thisId = $(this).attr("data-id");
 
-  Axios.post({
-    method: "POST",
-    url: "/articles/" + thisId,
-    data: {
-      title: $("#titleinput")
-        .val()
-        .trim(),
-      body: $("#bodyinput")
-        .val()
-        .trim()
-    }
-  }).then(function(data) {
-    console.log(data);
-  });
+  axios
+    .post({
+      method: "POST",
+      url: "/articles/" + thisId,
+      data: {
+        title: $("#titleinput")
+          .val()
+          .trim(),
+        body: $("#bodyinput")
+          .val()
+          .trim()
+      }
+    })
+    .then(function(data) {
+      console.log(data);
+    });
   $("#titleinput").val("");
   $("#bodyinput").val("");
 });
