@@ -23,7 +23,7 @@ $.getJSON("/saved", function(data) {
         <p class="card-text">${data[i].body}.</p>
         <a href="${data[i].link}">Original Story Link</a>
       </div>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#notesModal">
+      <button id="noteButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#notesModal">
         See your notes Here!
         </button>
       </div>
@@ -37,6 +37,23 @@ $.getJSON("/saved", function(data) {
         </div>
     </div>`);
   }
+});
+
+$("#noteButton").on("click", function() {
+  $("#notesView").empty();
+  var thisId = $(this).attr("data-id");
+  $.ajax({
+    method: "GET",
+    url: "/articles/" + thisId
+  }).then(function(data) {
+    console.log(data);
+    if (data.note) {
+      $("#notesView").append(
+        `<h2>${data.note.title}</h2>
+         <p>${data.note.body}</p>`
+      );
+    }
+  });
 });
 
 $("#savenote").on("click", function() {
