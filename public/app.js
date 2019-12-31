@@ -1,11 +1,12 @@
 const axios = require("axios");
 
-$.getJSON("/articles", function(data) {
+axios.get("/articles", function(data) {
+  console.log("ARTICLES", data);
   for (var i = 0; i < data.length; i++) {
-    $("#articles").append(
+    $("#articles1").append(
       `<div class="card">
           <div class="card-body">
-            <h5 class="card-title">${data[i].name}</h5>
+            <h5 class="card-title">${data[i].title}</h5>
             <p class="card-text">${data[i].body}.</p>
             <a href="${data[i].link}">Original Story Link</a>
             <a href="/saving" class="btn btn-primary">Save this Article</a>
@@ -15,7 +16,8 @@ $.getJSON("/articles", function(data) {
   }
 });
 
-$.getJSON("/saved", function(data) {
+axios.get("/saved", function(data) {
+  console.log("SAVED", data);
   for (var i = 0; i < data.length; i++) {
     $("#saved").append(`<div class="card">
       <div class="card-body">
@@ -32,7 +34,7 @@ $.getJSON("/saved", function(data) {
             <h5>Title</h5>
             <input type="text" id="titleinput">
             <h5>Note<h5>
-            <input type="text" id="bodyinput>
+            <input type="text" id="bodyinput">
             <a href="/notes" class="btn btn-primary">Save Note</a>
         </div>
     </div>`);
@@ -42,10 +44,7 @@ $.getJSON("/saved", function(data) {
 $("#noteButton").on("click", function() {
   $("#notesView").empty();
   var thisId = $(this).attr("data-id");
-  $.ajax({
-    method: "GET",
-    url: "/articles/" + thisId
-  }).then(function(data) {
+  axios.get("/articles/" + thisId).then(function(data) {
     console.log(data);
     if (data.note) {
       for (let i = 0; i < data.length; i++) {
